@@ -1,23 +1,38 @@
-import Passport from "./passport.js";
+import Bill from "./bill.js";
 
-let firstName = document.querySelector("#first-name");
-let lastName = document.querySelector("#last-name");
+const form = document.querySelector("#amount-form");
+const amount = document.querySelector("#amount");
+const tbody = document.querySelector("#tbody");
 
-let answer1 = document.querySelector("#answer1");
-let answer2 = document.querySelector("#answer2");
-let answer3 = document.querySelector("#answer3");
-let answer4 = document.querySelector("#answer4");
-let answer5 = document.querySelector("#answer5");
+const bill = new Bill();
 
 function render() {
-  let passport = new Passport(firstName.value, lastName.value);
-
-  answer1.textContent = passport.getFirstName();
-  answer2.textContent = passport.getLastName();
-  answer3.textContent = passport.getFullName();
-  answer4.textContent = passport.getInitials();
-  answer5.textContent = passport.getIsValidName();
+    tbody.innerHTML = "";
+    bill.amounts.forEach(function (amount) {
+      tbody.insertAdjacentHTML("beforeend", `<tr>
+        <td>Paid</td>
+        <td>${amount}</td>
+	    </tr>`);
+    });
+    tbody.insertAdjacentHTML("beforeend", `<tr class="separator"></tr>
+      <tr>
+        <th>Total</th>
+        <td>${bill.getTotal()}</td>
+      </tr>
+      <tr>
+        <th>Number of people</th>
+        <td>${bill.getCount()}</td>
+      </tr>
+      <tr>
+        <th>Amount per person</th>
+        <td>${bill.getAverage()}</td>
+      </tr>`);
 }
 
-firstName.addEventListener("keyup", render);
-lastName.addEventListener("keyup", render);
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  bill.addAmount(amount.value);
+  render();
+  amount.value = "";
+});
